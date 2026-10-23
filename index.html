@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cloud Resource Allocation Optimizer</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#"><span class="brand-icon">☁</span> CloudOpt<span class="accent">.</span></a>
+    <nav><a href="#overview">Overview</a><a href="#workbench">Optimizer</a><a href="#results">Results</a></nav>
+    <a class="github-link" href="https://github.com/" target="_blank" rel="noreferrer">GitHub ↗</a>
+  </header>
+
+  <main>
+    <section class="hero" id="overview">
+      <div class="hero-copy">
+        <div class="eyebrow"><span class="pulse"></span> CLOUD SCHEDULING SIMULATOR</div>
+        <h1>Smarter tasks.<br><span class="gradient-text">Better resource</span><br>allocation.</h1>
+        <p>Model task dependencies, schedule workloads, and allocate virtual machines using graph theory and a dependency-aware optimization heuristic.</p>
+        <div class="hero-actions"><a class="btn primary" href="#workbench">Launch optimizer <span>↘</span></a><a class="btn secondary" href="#how-it-works">Explore methodology</a></div>
+        <div class="hero-note"><span class="status-dot"></span> Simulation mode · No real cloud account required</div>
+      </div>
+      <div class="hero-visual">
+        <div class="visual-top"><span>WORKLOAD OVERVIEW</span><span class="live-pill">● DEMO DATA</span></div>
+        <div class="visual-metrics">
+          <div><small>Tasks</small><strong id="heroTasks">5</strong></div>
+          <div><small>Virtual machines</small><strong id="heroVMs">3</strong></div>
+          <div><small>Dependency links</small><strong id="heroEdges">5</strong></div>
+        </div>
+        <div class="mini-graph">
+          <div class="graph-line line1"></div><div class="graph-line line2"></div><div class="graph-line line3"></div><div class="graph-line line4"></div>
+          <div class="node n1"><b>T1</b><small>4 units</small></div><div class="node n2"><b>T2</b><small>3 units</small></div><div class="node n3"><b>T3</b><small>5 units</small></div><div class="node n4"><b>T4</b><small>2 units</small></div><div class="node n5"><b>T5</b><small>3 units</small></div>
+        </div>
+        <div class="visual-foot"><span>Directed Acyclic Graph</span><span class="tiny-bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+      </div>
+    </section>
+
+    <section class="section" id="workbench">
+      <div class="section-heading"><div><div class="eyebrow">OPTIMIZATION WORKBENCH</div><h2>Configure your workload</h2><p>Change the sample data or enter your own tasks and machine capacities.</p></div><button class="btn secondary" id="resetBtn">↺ Reset sample data</button></div>
+      <div class="workbench-grid">
+        <div class="panel">
+          <div class="panel-heading"><span class="step">01</span><div><h3>Tasks & dependencies</h3><p>Duration in simulated time units. Dependencies are comma-separated task IDs.</p></div></div>
+          <div class="table-wrap"><table id="tasksTable"><thead><tr><th>Task ID</th><th>Duration</th><th>CPU needed</th><th>Depends on</th><th></th></tr></thead><tbody></tbody></table></div>
+          <button class="add-row" id="addTaskBtn">＋ Add task</button>
+        </div>
+        <div class="panel">
+          <div class="panel-heading"><span class="step">02</span><div><h3>Virtual machines</h3><p>Each task must fit the CPU capacity of its assigned VM.</p></div></div>
+          <div class="table-wrap"><table id="vmsTable"><thead><tr><th>VM name</th><th>CPU capacity</th><th></th></tr></thead><tbody></tbody></table></div>
+          <button class="add-row" id="addVmBtn">＋ Add virtual machine</button>
+          <div class="algorithm-box"><label for="algorithm">Scheduling strategy</label><select id="algorithm"><option value="greedy">Greedy optimizer (dependency-aware)</option><option value="fcfs">FCFS (dependency-aware)</option><option value="rr">Round Robin (time-sliced tasks)</option></select><div id="quantumWrap" class="hidden"><label for="quantum">Time quantum</label><input id="quantum" type="number" min="1" value="2"></div><small>Greedy prioritizes ready tasks by longest duration. Round Robin uses time slices while respecting dependencies.</small></div>
+          <button class="btn primary run-btn" id="runBtn">Run scheduling simulation <span>→</span></button>
+          <div id="errorBox" class="error hidden" role="alert"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="results">
+      <div class="section-heading"><div><div class="eyebrow">SIMULATION OUTPUT</div><h2>Performance dashboard</h2><p>Results update when you run the simulation.</p></div><button class="btn secondary" id="downloadBtn" disabled>↓ Download CSV</button></div>
+      <div class="metrics-grid">
+        <div class="metric-card"><div class="metric-label">Makespan <span>◷</span></div><div class="metric-value" id="makespan">—</div><div class="metric-foot">Total completion time</div></div>
+        <div class="metric-card"><div class="metric-label">CPU utilization <span>▥</span></div><div class="metric-value" id="utilization">—</div><div class="metric-foot">Estimated workload utilization</div></div>
+        <div class="metric-card"><div class="metric-label">Throughput <span>↗</span></div><div class="metric-value" id="throughput">—</div><div class="metric-foot">Tasks completed per time unit</div></div>
+        <div class="metric-card"><div class="metric-label">Critical path <span>⌁</span></div><div class="metric-value" id="criticalPath">—</div><div class="metric-foot" id="criticalDuration">Longest dependency path</div></div>
+      </div>
+      <div class="results-grid">
+        <div class="panel"><div class="panel-heading"><div><h3>Task execution schedule</h3><p>Assigned VM, start and finish time.</p></div><span class="tag" id="scheduleCount">Awaiting run</span></div><div class="table-wrap"><table id="scheduleTable"><thead><tr><th>Task</th><th>Dependencies</th><th>VM</th><th>Start</th><th>Finish</th><th>Duration</th></tr></thead><tbody><tr><td colspan="6" class="empty-cell">Run the simulation to generate a schedule.</td></tr></tbody></table></div></div>
+        <div class="panel"><div class="panel-heading"><div><h3>Dependency graph</h3><p>Arrows show prerequisite relationships.</p></div></div><div id="dag" class="dag"><p class="empty-cell">Your graph will appear here after a successful run.</p></div><div class="legend"><span><i class="legend-dot"></i> Task</span><span><i class="legend-line"></i> Dependency</span></div></div>
+      </div>
+      <div class="panel comparison-panel"><div class="panel-heading"><div><h3>Algorithm comparison</h3><p>Run the same workload through each available scheduler.</p></div><span class="tag">Same input workload</span></div><div class="table-wrap"><table id="comparisonTable"><thead><tr><th>Algorithm</th><th>Makespan</th><th>CPU utilization</th><th>Throughput</th><th>Note</th></tr></thead><tbody><tr><td colspan="5" class="empty-cell">Run the simulation to compare algorithms.</td></tr></tbody></table></div><div class="chart-area"><div class="chart-title">Makespan comparison <small>Lower is better</small></div><div id="comparisonChart" class="bar-chart"></div></div></div>
+    </section>
+
+    <section class="section methodology" id="how-it-works">
+      <div class="eyebrow">PROJECT METHODOLOGY</div><h2>Mathematics behind the optimizer</h2><p class="section-intro">This prototype connects the required graph theory and combinatorics concepts to a practical cloud scheduling simulation.</p>
+      <div class="method-grid">
+        <article class="method-card"><div class="method-icon">⌘</div><h3>Directed Acyclic Graph</h3><p>Tasks are nodes and dependencies are directed edges. Cycles are rejected because they prevent a valid task order.</p><span>GRAPH THEORY</span></article>
+        <article class="method-card"><div class="method-icon">⇢</div><h3>Topological sorting</h3><p>Determines an order in which every prerequisite appears before the task that depends on it.</p><span>DEPENDENCY MODELLING</span></article>
+        <article class="method-card"><div class="method-icon">◇</div><h3>Greedy selection</h3><p>Chooses a ready task using a documented heuristic, then assigns it to a compatible virtual machine.</p><span>COMBINATORIAL HEURISTIC</span></article>
+        <article class="method-card"><div class="method-icon">▥</div><h3>Performance metrics</h3><p>Uses makespan, estimated CPU utilization, throughput and critical path duration to evaluate results.</p><span>OPTIMIZATION EVALUATION</span></article>
+      </div>
+      <div class="scope-note"><span>ⓘ</span><p><strong>Project scope:</strong> This is a browser-based simulation, not a connection to real AWS, Azure or Google Cloud infrastructure. Metrics are estimates based on the workload model and should be interpreted accordingly.</p></div>
+    </section>
+  </main>
+  <footer><a class="brand" href="#"><span class="brand-icon">☁</span> CloudOpt<span class="accent">.</span></a><span>Cloud Resource Allocation Optimizer · Academic micro-project</span><a href="#overview">Back to top ↑</a></footer>
+  <script src="script.js"></script>
+</body>
+</html>
